@@ -1,27 +1,20 @@
-class Rule {
-  String input;
-  String output;
-  
-  Rule(String in, String out) {
-    input = in;
-    output = out;
-  }
-}
-
-String axiom = "F";
+String axiom; //<>//
 String sentence, nextSentence;
 float len = 100;
 float angle; 
 
-Rule[] rules = {
-  new Rule("F", "FF+[+F-F-F]-[-F+F+F]")
-};
+Rule[] rules;
 
 void setup() {
   size(1280, 720);
   background(25,25,25);
   angle = radians(25);
+  
+  axiom = myFractalTreeAxiom;
+  println(complexFractalTreeAxiom);
+  rules = myFractalTree;
   sentence = axiom;
+  
   turtle();
 }
 
@@ -29,7 +22,7 @@ void draw() {
 }
 
 void generate() {
-  len *= 0.6;
+  len *= 0.5;
   nextSentence = "";
   for(int i = 0; i < sentence.length(); i++) {
     String current = str(sentence.charAt(i));
@@ -49,7 +42,7 @@ void generate() {
 }
 
 void turtle() {
-  println(sentence);
+  println(sentence.length());
   background(25,25,25);
   stroke(255);
   resetMatrix();
