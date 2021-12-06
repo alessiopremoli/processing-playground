@@ -31,7 +31,7 @@ String fractalBushAxiom = "F";
 
 
 Rule[] myFractalTree = {
-  new Rule("F", "F+[+F]-[-F]-[-F]+[FF]")
+new Rule("F", "F[+F]F[-FF+F]F[+F]")
 };
 
 String myFractalTreeAxiom = "F";
