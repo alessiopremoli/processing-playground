@@ -1,6 +1,6 @@
 String axiom;
 String sentence, nextSentence;
-float len = 100;
+float len = 50;
 float angle;
 
 boolean horizontal = true;

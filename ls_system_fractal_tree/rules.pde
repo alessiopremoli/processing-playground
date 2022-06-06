@@ -38,9 +38,8 @@ String myFractalTreeAxiom = "F";
 
 
 Rule[] xenakisTree = {
-    new Rule("F", "F[+F]F[-F]F"),   
-    new Rule("+", ""),
-    new Rule("-", ""),
+    //new Rule("F", "FF+[+FF-F]-[-FF+F]"),
+    new Rule("F", "F[+F]F[-FF+F]F[+F]")
 };
 
 String xenakisTreeAxiom = "F";
