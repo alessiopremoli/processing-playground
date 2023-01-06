@@ -2,19 +2,17 @@ float linesHeight;
 float linesWidth;
 float linesPerRow = 368;
 float lines = 4;
+boolean PROCESS_AUDIO = false;
+int fftSize = 1024;
+float[] frequencies;
+int[] result;
 
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 Minim minim;
 
-// Set the size of the FFT to be used for frequency analysis
-int fftSize = 1024;
-// Create an array to hold the frequencies for each second of the song
-float[] frequencies;
-int[] result;
-
 public void settings() {
-  size(1080, 1080);
+  size(1104, 1104);
  
 }
 
@@ -27,20 +25,28 @@ void draw() {
   linesHeight = height / lines;
   linesWidth = width / linesPerRow;
   
-  result = getFrequencies("song.mp3");
+  println(linesWidth);
+  
+  if(PROCESS_AUDIO) {
+    result = getFrequencies("song.mp3");
+    saveToFile();
+  } else {
+    result = loadFromFile();
+  }
   
   noStroke();
   
-  println(linesHeight, linesWidth, linesPerRow);
   int trace = 0;
   for(int y = 0; y <= lines - 1; y++) {
     
      for(int x = 0; x <= linesPerRow - 1; x++) {
-       fill(frequencies[trace]);
+       fill(result[trace]);
        trace++;
        rect(float(x) * linesWidth, float(y) * linesHeight, linesWidth, linesHeight);
      }
   }
+  
+  saveFrame("test-###.png");
 }
 
 // This function takes in the path to an audio file and returns an array of frequencies for each second of the song
@@ -51,7 +57,6 @@ int[] getFrequencies(String filePath) {
 
   // Get the length of the song in seconds
   int songLength = floor(player.length() / 1000);
-  println(songLength);
 
   // Initialize the array to hold the frequencies
   frequencies = new float[songLength];
@@ -80,19 +85,35 @@ int[] getFrequencies(String filePath) {
     println(mean);
   }
 
-  // Create an array to hold the frequencies mapped to the 0-255 interval
-  int[] mappedFrequencies = new int[songLength];
-
-  
-  // Map the frequencies to the 0-255 interval
-  for (int i = 0; i < songLength; i++) {
-    mappedFrequencies[i] = (int) map(frequencies[i], 0, max(frequencies), 0, 255);
-  }
-
   // Return the array of frequencies
-  return mappedFrequencies;
+  return mapFrequencies(songLength);
 }
 
-void mouseClicked() {
-    saveFrame();
+void saveToFile() {
+  String[] resultsToSave = new String[result.length];
+  
+  for(int k = 0; k <= result.length - 1; k++) {
+    resultsToSave[k] = str(result[k]);
+  }
+  saveStrings("frequencies.txt",resultsToSave);
+}
+
+int[] loadFromFile() {
+  String[] lines = loadStrings("frequencies.txt");
+  frequencies = new float[lines.length];
+  for(int k = 0; k <= lines.length - 1; k++) {
+    frequencies[k] = float(lines[k]);
+  }
+  
+  return mapFrequencies(lines.length);
+}
+
+int[] mapFrequencies(int l) {
+  int[] mappedFrequencies = new int[l];
+
+  // Map the frequencies to the 0-255 interval
+  for (int i = 0; i < l; i++) {
+    mappedFrequencies[i] = (int) map(frequencies[i], 0, max(frequencies), 0, 255);
+  }
+  return mappedFrequencies;
 }
