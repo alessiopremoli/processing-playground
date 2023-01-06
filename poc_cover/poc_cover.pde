@@ -14,7 +14,7 @@ float[] frequencies;
 int[] result;
 
 public void settings() {
-  size(1840, 1840);
+  size(1080, 1080);
  
 }
 
@@ -28,7 +28,6 @@ void draw() {
   linesWidth = width / linesPerRow;
   
   result = getFrequencies("song.mp3");
-  println(result, result.length);
   
   noStroke();
   
@@ -36,8 +35,7 @@ void draw() {
   int trace = 0;
   for(int y = 0; y <= lines - 1; y++) {
     
-     for(int x = 0; x <= linesPerRow; x++) {
-       
+     for(int x = 0; x <= linesPerRow - 1; x++) {
        fill(frequencies[trace]);
        trace++;
        rect(float(x) * linesWidth, float(y) * linesHeight, linesWidth, linesHeight);
@@ -52,7 +50,8 @@ int[] getFrequencies(String filePath) {
   AudioPlayer player = minim.loadFile(filePath);
 
   // Get the length of the song in seconds
-  int songLength = player.length();
+  int songLength = floor(player.length() / 1000);
+  println(songLength);
 
   // Initialize the array to hold the frequencies
   frequencies = new float[songLength];
@@ -62,11 +61,10 @@ int[] getFrequencies(String filePath) {
 
   // Loop through each second of the song
   for (int i = 0; i < songLength; i++) {
-    println(i, songLength);
     // Read audio data for the current second
     player.play();
-    player.skip((int) (i * player.sampleRate()));
-
+    // player.skip(1000);
+    delay(1000);
     // Perform frequency analysis on the audio data
     fft.forward(player.left.toArray());
 
@@ -75,20 +73,26 @@ int[] getFrequencies(String filePath) {
     for (int j = 0; j < fftSize; j++) {
       sum += fft.getFreq(j);
     }
-    float mean = sum / fftSize;
+    float mean = sum / float(fftSize);
 
     // Add the mean frequency to the array
     frequencies[i] = mean;
+    println(mean);
   }
 
   // Create an array to hold the frequencies mapped to the 0-255 interval
   int[] mappedFrequencies = new int[songLength];
 
+  
   // Map the frequencies to the 0-255 interval
   for (int i = 0; i < songLength; i++) {
-    mappedFrequencies[i] = (int) map(frequencies[i], 0, player.sampleRate()/2, 0, 255);
+    mappedFrequencies[i] = (int) map(frequencies[i], 0, max(frequencies), 0, 255);
   }
 
   // Return the array of frequencies
   return mappedFrequencies;
+}
+
+void mouseClicked() {
+    saveFrame();
 }
