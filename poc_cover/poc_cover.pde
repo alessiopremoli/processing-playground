@@ -2,7 +2,7 @@ float linesHeight;
 float linesWidth;
 float linesPerRow = 368;
 float lines = 4;
-boolean PROCESS_AUDIO = false;
+boolean PROCESS_AUDIO = true;
 int fftSize = 1024;
 float[] frequencies;
 int[] result;
