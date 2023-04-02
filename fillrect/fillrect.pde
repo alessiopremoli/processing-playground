@@ -3,10 +3,10 @@ int idx = 0;
 int size = 10;
 PrintWriter output;
 boolean SAVE_MATRIX = true;
-int[][] positionMatrix = new int[125][80];
+int[][] positionMatrix = new int[192][108];
 
 void setup() {
-  size(1250, 800);
+  size(1920, 1080);
 
   values = loadJSONArray("final.json");
   output = createWriter("res.txt"); 
@@ -24,15 +24,16 @@ void fillAll() {
   }
 
   JSONObject value = values.getJSONObject(idx);
-  float percentage = value.getFloat("percent");
-
+  float percentage = value.getFloat("value");
+  float check = percentage * (width*height/100);
+  print(check);
 
   int count = 0;
   IntList cells = new IntList();
 
   for (int x = 0; x < width; x += size) {
     for (int y = 0; y < height; y += size) {
-      if (count <= percentage * 100) {
+      if (count <= check) {
         cells.append(1);
       } else {
         cells.append(0);
@@ -40,17 +41,19 @@ void fillAll() {
       count++;
     }
   }
+ 
   
   count = 0;
   
   for (int x = 0; x < width; x += size) {
     for (int y = 0; y < height; y += size) {
       int v = cells.get(count);
-      println(v);
+
       stroke(164, 153,179, 20);
       fill(83, 75, 98);
       rect(x, y, size, size);
       if(v == 0) {
+        println(count);
         int[] position = findInMatrix(count);
         // stroke(83, 83, 83);
         fill(27,23,37);
@@ -62,15 +65,15 @@ void fillAll() {
 }
 
 void mouseClicked() {
-  println("click");
+  println("click " + idx);
   fillAll();
   idx++;
 }
 
 int[] findInMatrix(int idx) {
   int[] res = new int[2];
-  for(int j = 0; j < 80; j++) {
-    for(int i = 0; i < 125; i++) {
+  for(int j = 0; j < 108; j++) {
+    for(int i = 0; i < 192; i++) {
       if(positionMatrix[i][j] == idx) {
         res[0] = i * 10;
         res[1] = j * 10;
@@ -93,7 +96,7 @@ int t = 0;
    int bottom = (height/10);
    String direction = "right";
    
-   while(t < 10000) {
+   while(t < 192 * 108) {
      positionMatrix[x][y] = t;
      
     if(x == right - 1) {
@@ -128,8 +131,8 @@ int t = 0;
    }
    
    if(SAVE_MATRIX) {
-     for(int j = 0; j < 80; j++) {
-       for(int i = 0; i < 125; i++) {
+     for(int j = 0; j < 108; j++) {
+       for(int i = 0; i < 192; i++) {
          output.print(nf(positionMatrix[i][j], 5) + " ");
        }
        
